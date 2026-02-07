@@ -444,24 +444,3 @@ fun getGermanBloodValues(): List<BloodValue> = listOf(
 
     // Continue with more categories...
 ) + getGermanBloodValuesPart2() // Combine with additional values
-
-// Additional blood values from part 2
-fun getGermanBloodValuesPart2(): List<BloodValue> = listOf(
-    // Add a basic example here
-    BloodValue(
-        nameDe = "Platzhalter",
-        nameEn = "Placeholder",
-        abbreviation = "PH",
-        unit = "mg/dl",
-        category = "Test",
-        descriptionDe = "Platzhalter für weitere Werte",
-        descriptionEn = "Placeholder for additional values",
-        minNormal = 0.0, maxNormal = 10.0,
-        criticalLow = 0.0, criticalHigh = 20.0,
-        highMeaningDe = "Test",
-        highMeaningEn = "Test",
-        lowMeaningDe = "Test",
-        lowMeaningEn = "Test",
-        sortOrder = 100
-    )
-)

@@ -32,29 +32,29 @@ data class BloodValue(
     
     // Reference ranges - separate for male/female if different
     @ColumnInfo(name = "min_male")
-    val minMale: Double?,
+    val minMale: Double? = null,
     
     @ColumnInfo(name = "max_male")
-    val maxMale: Double?,
+    val maxMale: Double? = null,
     
     @ColumnInfo(name = "min_female")
-    val minFemale: Double?,
+    val minFemale: Double? = null,
     
     @ColumnInfo(name = "max_female")
-    val maxFemale: Double?,
+    val maxFemale: Double? = null,
     
     // If ranges are the same for both genders
     @ColumnInfo(name = "min_normal")
-    val minNormal: Double?,
+    val minNormal: Double? = null,
     
     @ColumnInfo(name = "max_normal")
-    val maxNormal: Double?,
+    val maxNormal: Double? = null,
     
     @ColumnInfo(name = "critical_low")
-    val criticalLow: Double?,
+    val criticalLow: Double? = null,
     
     @ColumnInfo(name = "critical_high")
-    val criticalHigh: Double?,
+    val criticalHigh: Double? = null,
     
     @ColumnInfo(name = "high_meaning_de")
     val highMeaningDe: String,

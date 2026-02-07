@@ -17,11 +17,8 @@ import com.bloodworktracker.data.model.Gender
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.Date
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class BloodworkRepository @Inject constructor(
+class BloodworkRepository(
     private val bloodValueDao: BloodValueDao,
     private val bloodTestDao: BloodTestDao,
     private val bloodTestResultDao: BloodTestResultDao

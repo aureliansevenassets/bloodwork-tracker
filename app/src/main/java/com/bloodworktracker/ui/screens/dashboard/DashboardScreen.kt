@@ -4,9 +4,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Analytics
-import androidx.compose.material.icons.filled.Biotech
-import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -165,12 +165,12 @@ private fun QuickStatsCard(totalTests: Int) {
             StatItem(
                 value = totalTests.toString(),
                 label = "Tests",
-                icon = Icons.Default.Biotech
+                icon = Icons.Default.Favorite
             )
             StatItem(
                 value = "60+",
                 label = "Werte",
-                icon = Icons.Default.Analytics
+                icon = Icons.Default.List
             )
         }
     }
@@ -230,13 +230,13 @@ private fun QuickActionsSection(
         QuickActionCard(
             title = "Alle Tests",
             subtitle = "Verlauf anzeigen",
-            icon = Icons.Default.History,
+            icon = Icons.Default.DateRange,
             onClick = onNavigateToTests
         )
         QuickActionCard(
             title = "Laborwerte",
             subtitle = "Referenzwerte nachschlagen",
-            icon = Icons.Default.Biotech,
+            icon = Icons.Default.Favorite,
             onClick = onNavigateToValues
         )
     }
