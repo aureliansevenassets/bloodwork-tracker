@@ -60,18 +60,29 @@ A comprehensive Android app for tracking blood test results with German laborato
 
 ### Using Command Line
 
-1. Clone and navigate to project:
-   ```bash
-   git clone https://github.com/aureliansevenassets/bloodwork-tracker.git
-   cd bloodwork-tracker
-   ```
+```bash
+git clone https://github.com/aureliansevenassets/bloodwork-tracker.git
+cd bloodwork-tracker
+./gradlew assembleDebug
+# APK: app/build/outputs/apk/debug/app-debug.apk
+```
 
-2. Build the APK:
-   ```bash
-   ./gradlew assembleDebug
-   ```
+### Using Docker (no local setup needed)
 
-3. Find the APK in `app/build/outputs/apk/debug/app-debug.apk`
+```bash
+git clone https://github.com/aureliansevenassets/bloodwork-tracker.git
+cd bloodwork-tracker
+docker build -t bloodwork-tracker .
+docker run --rm -v $(pwd)/output:/output bloodwork-tracker
+# APK: output/bloodwork-tracker.apk
+```
+
+### Using GitHub Actions (zero setup)
+
+1. Go to [Actions tab](https://github.com/aureliansevenassets/bloodwork-tracker/actions)
+2. Click the latest "Build APK" run
+3. Download the `bloodwork-tracker-debug` artifact
+4. Unzip → install the APK on your phone
 
 ## Installing on Your Phone
 
