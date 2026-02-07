@@ -36,6 +36,10 @@ class BloodworkViewModelFactory(
             @Suppress("UNCHECKED_CAST")
             return AnalysisViewModel(repository) as T
         }
+        if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return SettingsViewModel() as T // Note: SettingsViewModel doesn't need repository
+        }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
