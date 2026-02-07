@@ -69,5 +69,5 @@ interface BloodTestResultDao {
 
 data class ChartPoint(
     val value: Double,
-    val testDate: java.util.Date
+    @androidx.room.ColumnInfo(name = "test_date") val testDate: java.util.Date
 )

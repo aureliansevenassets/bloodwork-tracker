@@ -1,5 +1,6 @@
 package com.bloodworktracker.data.model
 
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Relation
 import com.bloodworktracker.data.database.entities.BloodTest
@@ -18,24 +19,24 @@ data class BloodTestWithResults(
 
 data class BloodTestResultWithValue(
     val id: Long,
-    val testId: Long,
-    val bloodValueId: Long,
+    @ColumnInfo(name = "test_id") val testId: Long,
+    @ColumnInfo(name = "blood_value_id") val bloodValueId: Long,
     val value: Double,
     val status: ValueStatus,
     val notes: String,
-    val nameDe: String,
-    val nameEn: String,
+    @ColumnInfo(name = "name_de") val nameDe: String,
+    @ColumnInfo(name = "name_en") val nameEn: String,
     val abbreviation: String,
     val unit: String,
     val category: String,
-    val minMale: Double?,
-    val maxMale: Double?,
-    val minFemale: Double?,
-    val maxFemale: Double?,
-    val minNormal: Double?,
-    val maxNormal: Double?,
-    val criticalLow: Double?,
-    val criticalHigh: Double?
+    @ColumnInfo(name = "min_male") val minMale: Double?,
+    @ColumnInfo(name = "max_male") val maxMale: Double?,
+    @ColumnInfo(name = "min_female") val minFemale: Double?,
+    @ColumnInfo(name = "max_female") val maxFemale: Double?,
+    @ColumnInfo(name = "min_normal") val minNormal: Double?,
+    @ColumnInfo(name = "max_normal") val maxNormal: Double?,
+    @ColumnInfo(name = "critical_low") val criticalLow: Double?,
+    @ColumnInfo(name = "critical_high") val criticalHigh: Double?
 )
 
 data class BloodValueCategory(
