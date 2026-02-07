@@ -1,0 +1,73 @@
+<!--?xml version="1.0" encoding="utf-8"?-->
+<resources>
+    <string name="app_name">Blutwerte Tracker</string>
+    
+    <!-- Navigation -->
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_tests">Tests</string>
+    <string name="nav_values">Laborwerte</string>
+    <string name="nav_analysis">Analyse</string>
+    <string name="nav_settings">Einstellungen</string>
+    
+    <!-- Dashboard -->
+    <string name="dashboard_welcome">Willkommen bei Ihrem Blutwerte Tracker</string>
+    <string name="dashboard_subtitle">Behalten Sie Ihre Gesundheit im Blick</string>
+    <string name="quick_actions_title">Schnellzugriff</string>
+    <string name="recent_tests_title">Letzte Tests</string>
+    
+    <!-- Actions -->
+    <string name="add_test">Test hinzufügen</string>
+    <string name="view_all_tests">Alle Tests</string>
+    <string name="view_values">Laborwerte</string>
+    <string name="analyze">Analysieren</string>
+    
+    <!-- Blood Values Categories -->
+    <string name="category_blood_count">Kleines Blutbild</string>
+    <string name="category_diff_blood_count">Großes Blutbild</string>
+    <string name="category_liver">Leberwerte</string>
+    <string name="category_kidney">Nierenwerte</string>
+    <string name="category_thyroid">Schilddrüse</string>
+    <string name="category_lipids">Blutfette</string>
+    <string name="category_diabetes">Diabetes</string>
+    <string name="category_inflammation">Entzündung</string>
+    <string name="category_vitamins">Vitamine</string>
+    <string name="category_hormones">Hormone</string>
+    <string name="category_tumor_markers">Tumormarker</string>
+    <string name="category_electrolytes">Elektrolyte</string>
+    <string name="category_iron">Eisenstoffwechsel</string>
+    
+    <!-- Value Status -->
+    <string name="status_normal">Normal</string>
+    <string name="status_high">Erhöht</string>
+    <string name="status_low">Erniedrigt</string>
+    <string name="status_critical_high">Kritisch erhöht</string>
+    <string name="status_critical_low">Kritisch erniedrigt</string>
+    
+    <!-- Common -->
+    <string name="back">Zurück</string>
+    <string name="save">Speichern</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="delete">Löschen</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="search">Suchen</string>
+    <string name="filter">Filter</string>
+    <string name="date">Datum</string>
+    <string name="value">Wert</string>
+    <string name="unit">Einheit</string>
+    <string name="reference_range">Referenzbereich</string>
+    <string name="notes">Notizen</string>
+    
+    <!-- Empty States -->
+    <string name="no_tests_yet">Noch keine Tests vorhanden</string>
+    <string name="add_first_test">Fügen Sie Ihren ersten Bluttest hinzu</string>
+    <string name="no_values_found">Keine Werte gefunden</string>
+    
+    <!-- PDF Export -->
+    <string name="export_pdf">Als PDF exportieren</string>
+    <string name="pdf_generated">PDF wurde erstellt</string>
+    
+    <!-- Errors -->
+    <string name="error_occurred">Ein Fehler ist aufgetreten</string>
+    <string name="network_error">Netzwerkfehler</string>
+    <string name="data_load_error">Daten konnten nicht geladen werden</string>
+</resources>
