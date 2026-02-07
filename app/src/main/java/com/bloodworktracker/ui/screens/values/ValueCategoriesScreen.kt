@@ -26,7 +26,8 @@ import com.bloodworktracker.data.database.entities.BloodValue
 @Composable
 fun ValueCategoriesScreen(
     onNavigateBack: () -> Unit,
-    onNavigateToValue: (Long) -> Unit
+    onNavigateToValue: (Long) -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
     val context = LocalContext.current
     val database = BloodworkDatabase.getDatabase(context, kotlinx.coroutines.GlobalScope)

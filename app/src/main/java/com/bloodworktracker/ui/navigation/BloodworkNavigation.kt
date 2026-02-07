@@ -1,5 +1,6 @@
 package com.bloodworktracker.ui.navigation
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -19,6 +20,7 @@ import com.bloodworktracker.ui.screens.settings.SettingsScreen
 @Composable
 fun BloodworkNavigation(
     navController: NavHostController,
+    snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -30,7 +32,8 @@ fun BloodworkNavigation(
             DashboardScreen(
                 onNavigateToTests = { navController.navigate(Screen.TestList.route) },
                 onNavigateToValues = { navController.navigate(Screen.ValueCategories.route) },
-                onNavigateToAddTest = { navController.navigate(Screen.AddTest.route) }
+                onNavigateToAddTest = { navController.navigate(Screen.AddTest.route) },
+                snackbarHostState = snackbarHostState
             )
         }
         
@@ -40,7 +43,8 @@ fun BloodworkNavigation(
                 onNavigateToTest = { testId -> 
                     navController.navigate("${Screen.TestDetail.route}/$testId") 
                 },
-                onNavigateToAddTest = { navController.navigate(Screen.AddTest.route) }
+                onNavigateToAddTest = { navController.navigate(Screen.AddTest.route) },
+                snackbarHostState = snackbarHostState
             )
         }
         
@@ -49,7 +53,8 @@ fun BloodworkNavigation(
                 onNavigateBack = { navController.popBackStack() },
                 onTestSaved = { 
                     navController.popBackStack(Screen.TestList.route, false)
-                }
+                },
+                snackbarHostState = snackbarHostState
             )
         }
         
@@ -63,7 +68,8 @@ fun BloodworkNavigation(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToAnalysis = { 
                     navController.navigate("${Screen.Analysis.route}/$testId") 
-                }
+                },
+                snackbarHostState = snackbarHostState
             )
         }
         
@@ -72,7 +78,8 @@ fun BloodworkNavigation(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToValue = { valueId -> 
                     navController.navigate("${Screen.ValueDetail.route}/$valueId") 
-                }
+                },
+                snackbarHostState = snackbarHostState
             )
         }
         
@@ -83,7 +90,8 @@ fun BloodworkNavigation(
             val valueId = backStackEntry.arguments?.getLong("valueId") ?: 0L
             ValueDetailScreen(
                 valueId = valueId,
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                snackbarHostState = snackbarHostState
             )
         }
         
@@ -94,13 +102,15 @@ fun BloodworkNavigation(
             val testId = backStackEntry.arguments?.getLong("testId") ?: 0L
             AnalysisScreen(
                 testId = testId,
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                snackbarHostState = snackbarHostState
             )
         }
         
         composable(Screen.Settings.route) {
             SettingsScreen(
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                snackbarHostState = snackbarHostState
             )
         }
     }

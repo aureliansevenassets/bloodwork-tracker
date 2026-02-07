@@ -30,6 +30,7 @@ fun DashboardScreen(
     onNavigateToTests: () -> Unit,
     onNavigateToValues: () -> Unit,
     onNavigateToAddTest: () -> Unit,
+    snackbarHostState: SnackbarHostState,
     viewModel: DashboardViewModel = viewModel(
         factory = BloodworkViewModelFactory(
             (LocalContext.current.applicationContext as BloodworkApplication).repository

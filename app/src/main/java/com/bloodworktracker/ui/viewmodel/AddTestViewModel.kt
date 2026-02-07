@@ -21,7 +21,8 @@ data class AddTestUiState(
     val selectedValues: Map<Long, Double> = emptyMap(),
     val isLoading: Boolean = false,
     val error: String? = null,
-    val isSaving: Boolean = false
+    val isSaving: Boolean = false,
+    val testSaved: Boolean = false
 )
 
 class AddTestViewModel(
@@ -76,9 +77,14 @@ class AddTestViewModel(
         _uiState.value = _uiState.value.copy(selectedValues = currentValues)
     }
 
-    fun saveTest(onTestSaved: () -> Unit) {
+    fun saveTest() {
+        if (_uiState.value.selectedValues.isEmpty()) {
+            _uiState.value = _uiState.value.copy(error = "Bitte wählen Sie mindestens einen Blutwert aus")
+            return
+        }
+        
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isSaving = true)
+            _uiState.value = _uiState.value.copy(isSaving = true, testSaved = false)
             try {
                 val currentState = _uiState.value
                 
@@ -108,13 +114,16 @@ class AddTestViewModel(
                 
                 repository.insertResults(results)
                 
-                _uiState.value = _uiState.value.copy(isSaving = false)
-                onTestSaved()
+                _uiState.value = _uiState.value.copy(
+                    isSaving = false, 
+                    testSaved = true
+                )
                 
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     error = e.message ?: "Failed to save test",
-                    isSaving = false
+                    isSaving = false,
+                    testSaved = false
                 )
             }
         }

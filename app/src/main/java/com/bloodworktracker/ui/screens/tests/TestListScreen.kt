@@ -1,12 +1,17 @@
 package com.bloodworktracker.ui.screens.tests
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,13 +28,15 @@ import com.bloodworktracker.data.database.BloodworkDatabase
 import com.bloodworktracker.ui.viewmodel.TestListItem
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun TestListScreen(
     onNavigateBack: () -> Unit,
     onNavigateToTest: (Long) -> Unit,
-    onNavigateToAddTest: () -> Unit
+    onNavigateToAddTest: () -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
     val context = LocalContext.current
     val database = BloodworkDatabase.getDatabase(context, kotlinx.coroutines.GlobalScope)
@@ -44,6 +51,44 @@ fun TestListScreen(
     
     val uiState by viewModel.uiState.collectAsState()
     val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.GERMAN)
+    val scope = rememberCoroutineScope()
+    
+    // Pull to refresh
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = uiState.isRefreshing,
+        onRefresh = { viewModel.refreshTests() }
+    )
+    
+    // Handle back navigation
+    BackHandler {
+        onNavigateBack()
+    }
+    
+    // Error handling with snackbar
+    LaunchedEffect(uiState.error) {
+        if (uiState.error != null) {
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = uiState.error ?: "Fehler beim Laden der Tests",
+                    withDismissAction = true
+                )
+            }
+            viewModel.clearError()
+        }
+    }
+    
+    // Delete success feedback
+    LaunchedEffect(uiState.deleteSuccess) {
+        if (uiState.deleteSuccess) {
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = "Test erfolgreich gelöscht",
+                    withDismissAction = true
+                )
+            }
+            viewModel.clearDeleteSuccess()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -138,29 +183,40 @@ fun TestListScreen(
             }
             
             else -> {
-                LazyColumn(
+                Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(paddingValues),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                        .padding(paddingValues)
+                        .pullRefresh(pullRefreshState)
                 ) {
-                    items(
-                        items = uiState.tests,
-                        key = { it.id }
-                    ) { test ->
-                        TestItemCard(
-                            test = test,
-                            dateFormat = dateFormat,
-                            onTestClick = { onNavigateToTest(test.id) },
-                            onDeleteClick = { viewModel.deleteTest(test.id) }
-                        )
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(
+                            items = uiState.tests,
+                            key = { it.id }
+                        ) { test ->
+                            TestItemCard(
+                                test = test,
+                                dateFormat = dateFormat,
+                                onTestClick = { onNavigateToTest(test.id) },
+                                onDeleteClick = { viewModel.deleteTest(test.id) }
+                            )
+                        }
+                        
+                        // Add some padding at the bottom for the FAB
+                        item {
+                            Spacer(modifier = Modifier.height(80.dp))
+                        }
                     }
                     
-                    // Add some padding at the bottom for the FAB
-                    item {
-                        Spacer(modifier = Modifier.height(80.dp))
-                    }
+                    PullRefreshIndicator(
+                        refreshing = uiState.isRefreshing,
+                        state = pullRefreshState,
+                        modifier = Modifier.align(Alignment.TopCenter)
+                    )
                 }
             }
         }

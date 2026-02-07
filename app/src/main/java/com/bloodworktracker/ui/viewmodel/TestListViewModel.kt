@@ -24,7 +24,9 @@ data class TestListItem(
 data class TestListUiState(
     val tests: List<TestListItem> = emptyList(),
     val isLoading: Boolean = true,
-    val error: String? = null
+    val isRefreshing: Boolean = false,
+    val error: String? = null,
+    val deleteSuccess: Boolean = false
 )
 
 class TestListViewModel(
@@ -86,6 +88,7 @@ class TestListViewModel(
             try {
                 val bloodTest = BloodTest(id = testId, testDate = java.util.Date()) // Only ID is needed for deletion
                 repository.deleteBloodTest(bloodTest)
+                _uiState.value = _uiState.value.copy(deleteSuccess = true)
                 // Tests will be automatically refreshed through the Flow
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
@@ -98,8 +101,51 @@ class TestListViewModel(
     fun clearError() {
         _uiState.value = _uiState.value.copy(error = null)
     }
+    
+    fun clearDeleteSuccess() {
+        _uiState.value = _uiState.value.copy(deleteSuccess = false)
+    }
 
     fun refreshTests() {
-        loadTests()
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isRefreshing = true)
+            try {
+                repository.getAllBloodTestsWithResults().collect { testsWithResults ->
+                    val testItems = testsWithResults
+                        .sortedByDescending { it.bloodTest.testDate }
+                        .map { testWithResults ->
+                            val normalCount = testWithResults.results.count { 
+                                it.status == ValueStatus.NORMAL 
+                            }
+                            val abnormalCount = testWithResults.results.count { 
+                                it.status == ValueStatus.HIGH || it.status == ValueStatus.LOW 
+                            }
+                            val criticalCount = testWithResults.results.count { 
+                                it.status == ValueStatus.CRITICAL_HIGH || it.status == ValueStatus.CRITICAL_LOW 
+                            }
+                            
+                            TestListItem(
+                                id = testWithResults.bloodTest.id,
+                                testDate = testWithResults.bloodTest.testDate,
+                                labName = testWithResults.bloodTest.labName,
+                                numberOfValues = testWithResults.results.size,
+                                normalCount = normalCount,
+                                abnormalCount = abnormalCount,
+                                criticalCount = criticalCount
+                            )
+                        }
+                    
+                    _uiState.value = _uiState.value.copy(
+                        tests = testItems,
+                        isRefreshing = false
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    error = e.message ?: "Failed to refresh tests",
+                    isRefreshing = false
+                )
+            }
+        }
     }
 }

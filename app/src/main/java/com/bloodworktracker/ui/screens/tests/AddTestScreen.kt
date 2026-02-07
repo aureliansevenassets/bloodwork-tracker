@@ -1,8 +1,10 @@
 package com.bloodworktracker.ui.screens.tests
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -11,8 +13,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,12 +33,14 @@ import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.*
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTestScreen(
     onNavigateBack: () -> Unit,
-    onTestSaved: () -> Unit
+    onTestSaved: () -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
     val context = LocalContext.current
     val database = BloodworkDatabase.getDatabase(context, kotlinx.coroutines.GlobalScope)
@@ -47,17 +55,51 @@ fun AddTestScreen(
     
     val uiState by viewModel.uiState.collectAsState()
     val dateDialogState = rememberMaterialDialogState()
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+    val scope = rememberCoroutineScope()
     
     var expandedCategories by remember { mutableStateOf(setOf<String>()) }
+    var hasValidationErrors by remember { mutableStateOf(false) }
     
     // Date formatter
     val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.GERMAN)
     
-    // Error handling
+    // Handle back navigation
+    BackHandler {
+        onNavigateBack()
+    }
+    
+    // Form validation
+    val canSave = uiState.selectedValues.isNotEmpty() && !uiState.isSaving
+    val validationMessage = when {
+        uiState.selectedValues.isEmpty() -> "Bitte wählen Sie mindestens einen Blutwert aus"
+        else -> null
+    }
+    
+    // Success/Error handling
     LaunchedEffect(uiState.error) {
         if (uiState.error != null) {
-            // Show error (could be improved with a proper error dialog/snackbar)
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = uiState.error ?: "Fehler beim Speichern des Tests",
+                    withDismissAction = true
+                )
+            }
             viewModel.clearError()
+        }
+    }
+    
+    // Success handling
+    LaunchedEffect(uiState.testSaved) {
+        if (uiState.testSaved) {
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = "Test erfolgreich gespeichert",
+                    withDismissAction = true
+                )
+            }
+            onTestSaved()
         }
     }
     
@@ -73,11 +115,20 @@ fun AddTestScreen(
                 actions = {
                     TextButton(
                         onClick = { 
-                            if (uiState.selectedValues.isNotEmpty()) {
-                                viewModel.saveTest(onTestSaved)
+                            if (canSave) {
+                                keyboardController?.hide()
+                                viewModel.saveTest()
+                            } else if (validationMessage != null) {
+                                hasValidationErrors = true
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        message = validationMessage,
+                                        withDismissAction = true
+                                    )
+                                }
                             }
                         },
-                        enabled = !uiState.isSaving && uiState.selectedValues.isNotEmpty()
+                        enabled = !uiState.isSaving
                     ) {
                         if (uiState.isSaving) {
                             CircularProgressIndicator(
@@ -160,7 +211,14 @@ fun AddTestScreen(
                                 onValueChange = viewModel::updateLabName,
                                 modifier = Modifier.fillMaxWidth(),
                                 label = { Text("Labor (optional)") },
-                                placeholder = { Text("z.B. Laborgemeinschaft Hamburg") }
+                                placeholder = { Text("z.B. Laborgemeinschaft Hamburg") },
+                                keyboardOptions = KeyboardOptions(
+                                    imeAction = ImeAction.Next
+                                ),
+                                keyboardActions = KeyboardActions(
+                                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                                ),
+                                singleLine = true
                             )
                             
                             OutlinedTextField(
@@ -169,6 +227,15 @@ fun AddTestScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 label = { Text("Notizen (optional)") },
                                 placeholder = { Text("Zusätzliche Bemerkungen...") },
+                                keyboardOptions = KeyboardOptions(
+                                    imeAction = ImeAction.Done
+                                ),
+                                keyboardActions = KeyboardActions(
+                                    onDone = { 
+                                        keyboardController?.hide()
+                                        focusManager.clearFocus()
+                                    }
+                                ),
                                 minLines = 2
                             )
                         }
@@ -248,7 +315,21 @@ fun AddTestScreen(
                                                 },
                                                 modifier = Modifier.weight(1f),
                                                 label = { Text("Wert") },
-                                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                                                keyboardOptions = KeyboardOptions(
+                                                    keyboardType = KeyboardType.Decimal,
+                                                    imeAction = ImeAction.Next
+                                                ),
+                                                keyboardActions = KeyboardActions(
+                                                    onNext = { focusManager.moveFocus(FocusDirection.Down) },
+                                                    onDone = { 
+                                                        keyboardController?.hide()
+                                                        focusManager.clearFocus()
+                                                    }
+                                                ),
+                                                isError = textValue.isNotEmpty() && textValue.toDoubleOrNull() == null,
+                                                supportingText = if (textValue.isNotEmpty() && textValue.toDoubleOrNull() == null) {
+                                                    { Text("Bitte geben Sie eine gültige Zahl ein", color = MaterialTheme.colorScheme.error) }
+                                                } else null,
                                                 singleLine = true
                                             )
                                             

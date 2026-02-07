@@ -44,6 +44,7 @@ fun BloodworkApp() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
+    val snackbarHostState = remember { SnackbarHostState() }
     
     // Define bottom navigation items
     val bottomNavItems = listOf(
@@ -74,6 +75,7 @@ fun BloodworkApp() {
     
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             if (shouldShowBottomBar) {
                 NavigationBar {
@@ -109,6 +111,7 @@ fun BloodworkApp() {
     ) { innerPadding ->
         BloodworkNavigation(
             navController = navController,
+            snackbarHostState = snackbarHostState,
             modifier = Modifier.padding(innerPadding)
         )
     }
