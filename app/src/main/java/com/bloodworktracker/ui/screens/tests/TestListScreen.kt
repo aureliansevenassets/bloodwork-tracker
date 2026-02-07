@@ -49,7 +49,8 @@ fun TestListScreen(
     val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.GERMAN)
     val scope = rememberCoroutineScope()
     
-    // Pull to refresh functionality will be implemented later
+    // Manual refresh functionality
+    // Pull-to-refresh will be added in a future update when the API is stable
     
     // Handle back navigation
     BackHandler {
