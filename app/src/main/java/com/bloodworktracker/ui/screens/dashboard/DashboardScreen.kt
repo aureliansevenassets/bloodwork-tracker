@@ -36,8 +36,8 @@ fun DashboardScreen(
         )
     )
 ) {
-    val recentTests by viewModel.recentTests.collectAsState()
-    val totalTests by viewModel.totalTestsCount.collectAsState()
+    val recentTests by viewModel.recentTests.collectAsState(initial = emptyList())
+    val totalTests by viewModel.totalTestsCount.collectAsState(initial = 0)
     
     Scaffold(
         topBar = {
