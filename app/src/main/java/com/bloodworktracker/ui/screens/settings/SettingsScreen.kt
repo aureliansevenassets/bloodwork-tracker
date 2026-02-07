@@ -21,7 +21,8 @@ import com.bloodworktracker.data.model.Gender
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
     val viewModel: SettingsViewModel = viewModel()
     

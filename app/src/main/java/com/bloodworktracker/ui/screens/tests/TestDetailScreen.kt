@@ -32,7 +32,8 @@ import java.util.*
 fun TestDetailScreen(
     testId: Long,
     onNavigateBack: () -> Unit,
-    onNavigateToAnalysis: () -> Unit
+    onNavigateToAnalysis: () -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
     val context = LocalContext.current
     val database = BloodworkDatabase.getDatabase(context, kotlinx.coroutines.GlobalScope)

@@ -6,12 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -30,7 +26,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TestListScreen(
     onNavigateBack: () -> Unit,
@@ -53,11 +49,7 @@ fun TestListScreen(
     val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.GERMAN)
     val scope = rememberCoroutineScope()
     
-    // Pull to refresh
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = uiState.isRefreshing,
-        onRefresh = { viewModel.refreshTests() }
-    )
+    // Pull to refresh functionality will be implemented later
     
     // Handle back navigation
     BackHandler {
@@ -183,40 +175,29 @@ fun TestListScreen(
             }
             
             else -> {
-                Box(
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(paddingValues)
-                        .pullRefresh(pullRefreshState)
+                        .padding(paddingValues),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(
-                            items = uiState.tests,
-                            key = { it.id }
-                        ) { test ->
-                            TestItemCard(
-                                test = test,
-                                dateFormat = dateFormat,
-                                onTestClick = { onNavigateToTest(test.id) },
-                                onDeleteClick = { viewModel.deleteTest(test.id) }
-                            )
-                        }
-                        
-                        // Add some padding at the bottom for the FAB
-                        item {
-                            Spacer(modifier = Modifier.height(80.dp))
-                        }
+                    items(
+                        items = uiState.tests,
+                        key = { it.id }
+                    ) { test ->
+                        TestItemCard(
+                            test = test,
+                            dateFormat = dateFormat,
+                            onTestClick = { onNavigateToTest(test.id) },
+                            onDeleteClick = { viewModel.deleteTest(test.id) }
+                        )
                     }
                     
-                    PullRefreshIndicator(
-                        refreshing = uiState.isRefreshing,
-                        state = pullRefreshState,
-                        modifier = Modifier.align(Alignment.TopCenter)
-                    )
+                    // Add some padding at the bottom for the FAB
+                    item {
+                        Spacer(modifier = Modifier.height(80.dp))
+                    }
                 }
             }
         }

@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -55,7 +54,7 @@ fun AddTestScreen(
     
     val uiState by viewModel.uiState.collectAsState()
     val dateDialogState = rememberMaterialDialogState()
-    val keyboardController = LocalSoftwareKeyboardController.current
+    // TODO: Add keyboard controller when stable API is available
     val focusManager = LocalFocusManager.current
     val scope = rememberCoroutineScope()
     
@@ -116,7 +115,7 @@ fun AddTestScreen(
                     TextButton(
                         onClick = { 
                             if (canSave) {
-                                keyboardController?.hide()
+                                focusManager.clearFocus() // Clear focus to dismiss keyboard
                                 viewModel.saveTest()
                             } else if (validationMessage != null) {
                                 hasValidationErrors = true
@@ -232,7 +231,6 @@ fun AddTestScreen(
                                 ),
                                 keyboardActions = KeyboardActions(
                                     onDone = { 
-                                        keyboardController?.hide()
                                         focusManager.clearFocus()
                                     }
                                 ),
@@ -322,7 +320,6 @@ fun AddTestScreen(
                                                 keyboardActions = KeyboardActions(
                                                     onNext = { focusManager.moveFocus(FocusDirection.Down) },
                                                     onDone = { 
-                                                        keyboardController?.hide()
                                                         focusManager.clearFocus()
                                                     }
                                                 ),

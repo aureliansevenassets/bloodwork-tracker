@@ -29,7 +29,8 @@ import java.util.*
 @Composable
 fun AnalysisScreen(
     testId: Long,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
     val context = LocalContext.current
     val database = BloodworkDatabase.getDatabase(context, kotlinx.coroutines.GlobalScope)

@@ -33,7 +33,8 @@ import java.util.*
 @Composable
 fun ValueDetailScreen(
     valueId: Long,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
     val context = LocalContext.current
     val database = BloodworkDatabase.getDatabase(context, kotlinx.coroutines.GlobalScope)
